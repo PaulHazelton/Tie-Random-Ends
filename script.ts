@@ -1,38 +1,74 @@
-const initialNumStrings = getInput();
+main();
 
-console.log(`Initial strings: ${initialNumStrings}\n`);
+function main() {
+	const numStrings = getInputNumber(0);
+	const iterations = getInputNumber(1);
 
-// for (let i = 0; i < 20; i++) {
-// 	const x = getRandomInt(3);
-// 	const y = getRandomIntExclude(3, x);
-// 	console.log(`${x}, ${y}`);
-// }
+	const totals: number[] = new Array(numStrings + 1).fill(0);
 
-let loops = 0;
+	console.log(`Number of strings: ${numStrings}`);
+	console.log(`Iterations: ${iterations}\n`);
 
-for (let i = initialNumStrings * 2; i >= 2; i -= 2) {
-	
-	const x = getRandomInt(i);
-	const y = getRandomIntExclude(i, x);
-	
-	const loopMade = Math.trunc(x / 2) == Math.trunc(y / 2);
+	for (let i = 0; i < iterations; i++) {
+		const loopCount = simulateCountLoops(numStrings);
+		totals[loopCount]++;
+	}
 
-	if (loopMade)
-		loops++;
+	displaySummary(totals, iterations);
 
-	// console.log(`${i.toString().padEnd(2)} ends left, chose [${x},${y}]${loopMade ? " LOOP!" : ""}`);
+	console.log("");
+
+	const average = calculateAverage(totals, iterations);
+
+	console.log(`Average: ${average}`);
 }
 
-console.log(`Loops made: ${loops}`);
+function simulateCountLoops(numStrings: number): number {
 
-function getInput(): number {
-	const input = Deno.args[0] ?? "0";
+	let loops = 0;
+
+	for (let i = numStrings * 2; i >= 2; i -= 2) {
+
+		const x = getRandomInt(i);
+		const y = getRandomIntExclude(i, x);
+
+		const loopMade = Math.trunc(x / 2) == Math.trunc(y / 2);
+
+		if (loopMade)
+			loops++;
+	}
+
+	return loops;
+}
+
+function calculateAverage(loopTotals: number[], iterations: number): number {
+
+	let average = 0;
+
+	for (let i = 0; i < loopTotals.length; i++) {
+		average += i * (loopTotals[i] / iterations);
+	}
+
+	return average;
+}
+
+function displaySummary(loopTotals: number[], iterations: number) {
+	loopTotals.forEach((value, index) => {
+		if (value > 0) {
+
+			console.log(`[${String(index).padStart(2)}] = ${String(value).padStart(Math.log2(iterations) + 1)}`);
+		}
+	})
+}
+
+function getInputNumber(index: number): number {
+	const input = Deno.args[index] ?? "0";
 
 	try {
 		const result = Number.parseInt(input);
 
 		if (Number.isNaN(result)) {
-			console.error(`Bad input "${input}"`);	
+			console.error(`Bad input "${input}"`);
 			return 0;
 		}
 		return result;
@@ -54,3 +90,11 @@ function getRandomIntExclude(max: number, excludeThis: number): number {
 	else
 		return result;
 }
+
+// function debugThing() {
+// 	for (let i = 0; i < 20; i++) {
+// 		const x = getRandomInt(3);
+// 		const y = getRandomIntExclude(3, x);
+// 		console.log(`${x}, ${y}`);
+// 	}
+// }
