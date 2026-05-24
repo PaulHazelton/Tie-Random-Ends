@@ -1,23 +1,28 @@
-main();
+await main();
 
-function main() {
-	// const numStrings = getInputNumber(0);
+async function main() {
 	const maxNumStrings = getInputNumber(0);
 	const iterations = getInputNumber(1);
+
+	console.log(`Max number of strings: ${maxNumStrings}`);
+	console.log(`Iterations: ${iterations}\n`);
+
+	const data: string[] = new Array<string>(maxNumStrings);
 
 	for (let i = 1; i <= maxNumStrings; i++) {
 
 		const avg = runAndAverage(i, iterations);
 
 		console.log(`Strings: ${String(i).padStart(3)}, Avg: ${avg.toFixed(3)}`);
+
+		data[i-1] = `${i}, ${avg}`;
 	}
 
-	// console.log(`Number of strings: ${numStrings}`);
-	// console.log(`Iterations: ${iterations}\n`);
+	const text = data.join("\n");
 
-	
+	await Deno.writeTextFile("data.csv", text);
 
-	// console.log(`Average: ${average}`);
+	console.log("Generated data.csv");
 }
 
 function runAndAverage(numStrings: number, iterations: number): number {
@@ -29,10 +34,6 @@ function runAndAverage(numStrings: number, iterations: number): number {
 		const loopCount = simulateCountLoops(numStrings);
 		totals[loopCount]++;
 	}
-
-	// displaySummary(totals, iterations);
-
-	// console.log("");
 
 	return calculateAverage(totals, iterations);
 }
@@ -64,15 +65,6 @@ function calculateAverage(loopTotals: number[], iterations: number): number {
 	}
 
 	return average;
-}
-
-function displaySummary(loopTotals: number[], iterations: number) {
-	loopTotals.forEach((value, index) => {
-		if (value > 0) {
-
-			console.log(`[${String(index).padStart(2)}] = ${String(value).padStart(Math.log2(iterations) + 1)}`);
-		}
-	})
 }
 
 function getInputNumber(index: number): number {
@@ -111,4 +103,13 @@ function getRandomIntExclude(max: number, excludeThis: number): number {
 // 		const y = getRandomIntExclude(3, x);
 // 		console.log(`${x}, ${y}`);
 // 	}
+// }
+
+// function displaySummary(loopTotals: number[], iterations: number) {
+// 	loopTotals.forEach((value, index) => {
+// 		if (value > 0) {
+
+// 			console.log(`[${String(index).padStart(2)}] = ${String(value).padStart(Math.log2(iterations) + 1)}`);
+// 		}
+// 	})
 // }
