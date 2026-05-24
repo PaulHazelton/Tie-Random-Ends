@@ -1,26 +1,40 @@
 main();
 
 function main() {
-	const numStrings = getInputNumber(0);
+	// const numStrings = getInputNumber(0);
+	const maxNumStrings = getInputNumber(0);
 	const iterations = getInputNumber(1);
+
+	for (let i = 1; i <= maxNumStrings; i++) {
+
+		const avg = runAndAverage(i, iterations);
+
+		console.log(`Strings: ${String(i).padStart(3)}, Avg: ${avg.toFixed(3)}`);
+	}
+
+	// console.log(`Number of strings: ${numStrings}`);
+	// console.log(`Iterations: ${iterations}\n`);
+
+	
+
+	// console.log(`Average: ${average}`);
+}
+
+function runAndAverage(numStrings: number, iterations: number): number {
 
 	const totals: number[] = new Array(numStrings + 1).fill(0);
 
-	console.log(`Number of strings: ${numStrings}`);
-	console.log(`Iterations: ${iterations}\n`);
-
 	for (let i = 0; i < iterations; i++) {
+
 		const loopCount = simulateCountLoops(numStrings);
 		totals[loopCount]++;
 	}
 
-	displaySummary(totals, iterations);
+	// displaySummary(totals, iterations);
 
-	console.log("");
+	// console.log("");
 
-	const average = calculateAverage(totals, iterations);
-
-	console.log(`Average: ${average}`);
+	return calculateAverage(totals, iterations);
 }
 
 function simulateCountLoops(numStrings: number): number {
