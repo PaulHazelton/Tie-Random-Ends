@@ -1,13 +1,18 @@
-await main();
+import * as vega from "npm:vega@5";
+import * as vegaLite from "npm:vega-lite@5";
 
-async function main() {
+type Point = [number, number];
+
+main();
+
+function main() {
 	const maxNumStrings = getInputNumber(0);
 	const iterations = getInputNumber(1);
 
 	console.log(`Max number of strings: ${maxNumStrings}`);
 	console.log(`Iterations: ${iterations}\n`);
 
-	const data: string[] = new Array<string>(maxNumStrings);
+	const data: Point[] = new Array<Point>(maxNumStrings);
 
 	for (let i = 1; i <= maxNumStrings; i++) {
 
@@ -15,14 +20,37 @@ async function main() {
 
 		console.log(`Strings: ${String(i).padStart(3)}, Avg: ${avg.toFixed(3)}`);
 
-		data[i-1] = `${i}, ${avg}`;
+		data[i-1] = [i, avg];
 	}
 
-	const text = data.join("\n");
+	plotPoints(data);
 
-	await Deno.writeTextFile("data.csv", text);
+	// const text = data.join("\n");
 
-	console.log("Generated data.csv");
+	// await Deno.writeTextFile("data.csv", text);
+
+	// console.log("Generated data.csv");
+}
+
+async function plotPoints(points: Point[], outputPath = "output.svg"): Promise<void> {
+	const spec: vegaLite.TopLevelSpec = {
+		$schema: "https://vega.github.io/schema/vega-lite/v5.json",
+		data: {
+			values: points.map(([x, y]) => ({ x, y })),
+		},
+		mark: "line",
+		encoding: {
+			x: { field: "x", type: "quantitative" },
+			y: { field: "y", type: "quantitative" },
+		},
+	};
+
+	const vegaSpec = vegaLite.compile(spec).spec;
+	const view = new vega.View(vega.parse(vegaSpec), { renderer: "none" });
+	const svg = await view.toSVG();
+
+	await Deno.writeTextFile(outputPath, svg);
+	console.log(`Saved ${outputPath}`);
 }
 
 function runAndAverage(numStrings: number, iterations: number): number {
