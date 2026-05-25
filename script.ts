@@ -7,20 +7,27 @@ main();
 
 function main() {
 	const maxNumStrings = getInputNumber(0);
-	const iterations = getInputNumber(1);
+	// const iterations = getInputNumber(1);
 
 	console.log(`Max number of strings: ${maxNumStrings}`);
-	console.log(`Iterations: ${iterations}\n`);
+	// console.log(`Iterations: ${iterations}\n`);
 
 	const data: Point[] = new Array<Point>(maxNumStrings);
 
+	// $E[L | N] = sum_(n = 1)^(N) frac(1, (2 n - 1))$
+
+	let expectedValue = 0;
+
 	for (let i = 1; i <= maxNumStrings; i++) {
 
-		const avg = runAndAverage(i, iterations);
+		// const avg = runAndAverage(i, iterations);
 
-		console.log(`Strings: ${String(i).padStart(3)}, Avg: ${avg.toFixed(3)}`);
+		expectedValue += (1) / (2 * i - 1);
 
-		data[i-1] = [i, avg];
+		// console.log(`Strings: ${String(i).padStart(3)}, Avg: ${avg.toFixed(3)}`);
+		// console.log(`Strings: ${String(i).padStart(3)}, Ev: ${expectedValue.toFixed(3)}`);
+
+		data[i-1] = [i, expectedValue];
 	}
 
 	plotPoints(data);
